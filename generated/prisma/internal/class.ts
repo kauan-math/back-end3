@@ -12,13 +12,13 @@
  */
 
 import * as runtime from "@prisma/client/runtime/client"
-import type * as Prisma from "./prismaNamespace.ts"
+import type * as Prisma from "./prismaNamespace.js"
 
 
 const config: runtime.GetPrismaClientConfig = {
   "previewFeatures": [],
-  "clientVersion": "7.8.0",
-  "engineVersion": "3c6e192761c0362d496ed980de936e2f3cebcd3a",
+  "clientVersion": "7.9.1",
+  "engineVersion": "e922089b7d7502aff4249d5da3420f6fa55fc6ad",
   "activeProvider": "sqlite",
   "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Get a free hosted Postgres database in seconds: `npx create-db`\n\ngenerator client {\n  provider = \"prisma-client\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"sqlite\"\n}\n\nmodel alunos {\n  id             Int           @id @default(autoincrement())\n  nome           String\n  idade          Int?\n  dataNascimento DateTime?\n  email          String\n  cpf            String\n  senha          String?\n  plano          String\n  ultimoAcesso   DateTime?\n  updatedAt      DateTime      @updatedAt\n  createdAt      DateTime      @default(now())\n  treinos        treino[]\n  presencas      presenca[]\n  funcionarioId  Int?\n  funcionario    Funcionarios? @relation(fields: [funcionarioId], references: [id])\n}\n\nmodel Funcionarios {\n  id             Int       @id @default(autoincrement())\n  nome           String\n  adm            Boolean   @default(false)\n  email          String\n  senha          String\n  idade          Int?\n  dataNascimento DateTime?\n  cpf            String\n  clt            String\n  turno          String\n  cargo          String\n  updatedAt      DateTime  @updatedAt\n  createdAt      DateTime  @default(now())\n  alunos         alunos[]\n}\n\nmodel treino {\n  id          Int      @id @default(autoincrement())\n  nome        String\n  descricao   String\n  dificuldade String\n  duracao     Int\n  tipoTreino  String\n  alunoId     Int\n  aluno       alunos   @relation(fields: [alunoId], references: [id])\n  updatedAt   DateTime @updatedAt\n  createdAt   DateTime @default(now())\n}\n\nmodel receita {\n  id             Int      @id @default(autoincrement())\n  pagamento      String\n  dataPagamento  DateTime\n  valorPagamento String\n  status         String\n  formaPagamento String\n  updatedAt      DateTime @updatedAt\n  createdAt      DateTime @default(now())\n}\n\nmodel despesa {\n  id             Int       @id @default(autoincrement())\n  descricao      String\n  valor          Float\n  categoria      String // LUZ, AGUA, INTERNET, MANUTENCAO, OUTROS\n  dataVencimento DateTime\n  dataPagamento  DateTime?\n  status         String // PAGO, PENDENTE\n  updatedAt      DateTime  @updatedAt\n  createdAt      DateTime  @default(now())\n}\n\nmodel presenca {\n  id       Int      @id @default(autoincrement())\n  alunoId  Int\n  aluno    alunos   @relation(fields: [alunoId], references: [id])\n  dataHora DateTime @default(now())\n}\n",
   "runtimeDataModel": {
@@ -82,7 +82,7 @@ export interface PrismaClientConstructor {
     LogOpts extends LogOptions<Options> = LogOptions<Options>,
     OmitOpts extends Prisma.PrismaClientOptions['omit'] = Options extends { omit: infer U } ? U : Prisma.PrismaClientOptions['omit'],
     ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs
-  >(options: Prisma.Subset<Options, Prisma.PrismaClientOptions> ): PrismaClient<LogOpts, OmitOpts, ExtArgs>
+  >(options: Prisma.PrismaClientConstructorArgs<Options>): PrismaClient<LogOpts, OmitOpts, ExtArgs>
 }
 
 /**
@@ -103,7 +103,7 @@ export interface PrismaClientConstructor {
 
 export interface PrismaClient<
   in LogOpts extends Prisma.LogLevel = never,
-  in out OmitOpts extends Prisma.PrismaClientOptions['omit'] = undefined,
+  in out OmitOpts extends Prisma.PrismaClientOptions['omit'] = Prisma.PrismaClientOptions['omit'],
   in out ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs
 > {
   [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['other'] }
